@@ -1,3 +1,4 @@
+import { defineComponent, h } from 'vue'
 import { parse as faParse, icon as faIcon } from '@fortawesome/fontawesome-svg-core'
 import convert from '../converter'
 import log from '../logger'
@@ -21,11 +22,8 @@ function normalizeIconArgs (icon) {
   }
 }
 
-export default {
+export default defineComponent({
   name: 'FontAwesomeIcon',
-
-  functional: true,
-
   props: {
     border: {
       type: Boolean,
@@ -97,9 +95,7 @@ export default {
     }
   },
 
-  render (createElement, context) {
-    const { props } = context
-
+  setup (props) {
     const { icon: iconArgs, mask: maskArgs, symbol, title } = props
     const icon = normalizeIconArgs(iconArgs)
     const classes = objectWithKey('classes', classList(props))
@@ -116,8 +112,7 @@ export default {
     }
 
     const { abstract } = renderedIcon
-    const convertCurry = convert.bind(null, createElement)
-
-    return convertCurry(abstract[0], {}, context.data)
+    const convertCurry = convert.bind(null, h)
+    return () => convertCurry(abstract[0], {})
   }
-}
+})

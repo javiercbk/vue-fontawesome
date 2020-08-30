@@ -36,7 +36,7 @@ function combineClassObjects (...objs) {
   }, [])
 }
 
-function convert (h, element, props = {}, data = {}) {
+function convert (h, element, props = {}) {
   const children = (element.children || []).map(convert.bind(null, h))
 
   const mixins = Object.keys(element.attributes || {}).reduce((acc, key) => {
@@ -56,7 +56,6 @@ function convert (h, element, props = {}, data = {}) {
     return acc
   }, { 'class': {}, style: {}, attrs: {} })
 
-  const { class: dClass = {}, style: dStyle = {}, attrs: dAttrs = {}, ...remainingData } = data
 
   if (typeof element === 'string') {
     return element
@@ -64,11 +63,10 @@ function convert (h, element, props = {}, data = {}) {
     return h(
       element.tag,
       {
-        class: combineClassObjects(mixins.class, dClass),
-        style: { ...mixins.style, ...dStyle },
-        attrs: { ...mixins.attrs, ...dAttrs },
-        ...remainingData,
-        props
+        class: combineClassObjects(mixins.class, {}),
+        style: mixins.style,
+        ...mixins.attrs,
+        ...props
       },
       children
     )
